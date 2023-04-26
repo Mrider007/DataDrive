@@ -14,23 +14,25 @@ export function useDb(){
 // Create a Firestore context provider
 export const FirestoreProvider = ({ children }) => {
   const db = firebase.firestore();
-  const [folder, setFolder] = useState([]);
+  const [folders, setFolders] = useState([]);
   // const [files, setFiles] = useState([]);
     // const [folderData,setFolderData] = useState({})
 
 
 
-    //for folder 
+  //for folder 
   useEffect(() => {
+    const aFolders = [];
     db.collection('myfolder').onSnapshot(snapshot => {
-        setFolder(snapshot.docs.map(doc => ({
+        snapshot.docs.map(doc => (
+          aFolders.push({
             id: doc.id,
             data: doc.data()
-        })))
-    })
-
-    console.log(folder)
-
+          })
+        ))
+        setFolders(aFolders);
+      })
+    
     //for files
     // const collectionRef = db.collection('myfolder');
     //     collectionRef.get().then((querySnapshot) => {
@@ -48,7 +50,7 @@ export const FirestoreProvider = ({ children }) => {
     //         console.log('Error getting documents:', error);
     //     });
 
-}, [])
+  }, [db])
 
 
 
@@ -57,7 +59,7 @@ export const FirestoreProvider = ({ children }) => {
 // console.log(files)
   const value ={
     db,
-    folder,
+    folders,
     // folderData,
     // files
   }
