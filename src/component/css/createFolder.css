@@ -1,0 +1,15 @@
+.top{
+ position: relative;
+ height: 100px;   
+}
+.Add1{
+    position: absolute;
+    left: 10%;
+}
+.signout1{
+    position: absolute;
+    right: 10%;
+    bottom: 5%;
+    color: white;
+    border: none;
+}

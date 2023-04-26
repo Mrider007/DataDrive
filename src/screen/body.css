@@ -1,0 +1,66 @@
+.main{
+   background: linear-gradient(to top,rgb(94, 93, 93),rgb(224, 224, 224));
+   height: 1000vh;
+   align-items: center;
+   margin-top: 0;
+}
+.btn1 a{
+    list-style: none;
+    text-decoration: none;
+    color: white;
+    
+}
+.btn1 a:hover{
+    color: black;
+}
+
+.btn1{
+    margin: 2px;
+}
+
+/* .row-left{
+    margin: 10px;
+    width: 200px;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: brown;
+} */
+.back{
+    position: absolute;
+    top: 10%;
+}
+.Add{
+    padding: 10px 10px;
+}
+.input{
+    width: 100px;
+}
+.files{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 25px 0;
+}
+
+.file{
+    align-items: center;
+    width: 10rem;
+    overflow: hidden;
+    height: 10rem;
+}
+.Add1{
+    margin: auto;
+    padding: 10px 10px;
+    padding: 5px;
+    width: 200px;
+}
+.top{
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+.signout{
+    color: white;
+}
