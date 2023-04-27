@@ -5,7 +5,7 @@ import { storage, db } from '../Firebase';
 import firebase from "firebase"
 import { useAuth } from '../context/AuthContext';
 import { useDb } from '../context/dbContext';
-
+import { useLocation } from 'react-router-dom';
 
 
 function Add() {
@@ -13,35 +13,36 @@ function Add() {
   const [file, setFile] = useState(null);
   const [folder, setFolder] = useState([]);
 
-  const {currentUser} = useAuth()
+  const { currentUser } = useAuth()
   // const {folder} = useDb()
 
   // const folders = []
   // const value = [...folder]
   // folders.push(value)
- 
+
   // console.log(folderData)
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
+  const location = useLocation();
 
 
-  useEffect(()=>{
+  useEffect(() => {
 
     db.collection('myfolder').onSnapshot(snapshot => {
       setFolder(snapshot.docs.map(doc => ({
-          id: doc.id,
-          data: doc.data()
+        id: doc.id,
+        data: doc.data()
       })))
-  });
+    });
 
-  },[])
+  }, [])
 
-  
-  
-  
-  
-  
+
+
+
+
+
   const handleChange = (e) => {
     if (e.target.files[0]) {
       setFile(e.target.files[0])
@@ -50,38 +51,31 @@ function Add() {
   const handleUpload = (event) => {
     event.preventDefault();
     setShow(false);
-    
-    folder.forEach((item)=>{
-      // console.log(item.data.foldername)
-      const folderName = item.data.foldername
-      // console.log(item.id)
-      const folderId = item.id
+    //get current folder id from URL.
+    const sFolderPath = location.search.substring(1);
 
-      storage.ref(`${folderName}/${file.name}`).put(file).then(snapshot => {
-        storage.ref(`${folderName}`).child(file.name).getDownloadURL().then(url => {
-  
-  
-          const docRef = db.collection('myfolder').doc(`${folderId}`);
-           docRef.update({
-            bigFiles: firebase.firestore.FieldValue.arrayUnion({
-              filename: file.name,
-              fileURL: url,
-              size: snapshot._delegate.bytesTransferred,
-              user: `${currentUser.displayName}`,
-              id:db.collection("myfolder").doc().id
-            })
-          }).then(() => {
-            console.log('file uploaded')
-          }).catch((error) => {
-            console.error('Error updating document: ', error);
-          });
-  
-          setFile(null);
-  
-        })
+    storage.ref(`${sFolderPath}/${file.name}`).put(file).then(snapshot => {
+      storage.ref(`${sFolderPath}`).child(file.name).getDownloadURL().then(url => {
+        const docRef = db.collection('myfolder').doc(`${sFolderPath}`);
+        docRef.update({
+          bigFiles: firebase.firestore.FieldValue.arrayUnion({
+            filename: file.name,
+            fileURL: url,
+            size: snapshot._delegate.bytesTransferred,
+            user: `${currentUser.displayName}`,
+            id: db.collection("myfolder").doc().id
+          })
+        }).then((doc) => {
+          console.log('file uploaded')
+        }).catch((error) => {
+          console.error('Error updating document: ', error);
+        });
+
+        setFile(null);
+
       })
-  
     })
+
 
 
   }

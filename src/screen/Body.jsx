@@ -9,8 +9,8 @@ import { Breadcrumb } from 'react-bootstrap';
 import '../screen/body.css';
 import Add from '../component/Add';
 import '../component/card.css'
-import { db } from '../Firebase';
-import { useNavigate, Link } from 'react-router-dom';
+import { db, storage } from '../Firebase';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { auth } from '../Firebase';
 import firebase from 'firebase';
 // import { useFile } from '../context/fileContext';
@@ -21,37 +21,24 @@ import firebase from 'firebase';
 function Body() {
     const [files, setFiles] = useState([]);
     const Navigate = useNavigate()
-    // const {files} = useFile();
+    const location = useLocation();
 
-    // console.log(files)
     useEffect(() => {
-        // db.collection('myfiles').onSnapshot(snapshot => {
-        //     setFiles(snapshot.docs.map(doc => ({
-        //         fileid: doc.id,
-        //         data: doc.data()
-        //     })))
-        // })
-
-
-        const collectionRef = db.collection('myfolder');
-        collectionRef.get().then((querySnapshot) => {
-            // console.log(querySnapshot)
-            const mapValues = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                const bigFiles = data.bigFiles;
-                const mapValue = [...bigFiles]; // sab files add karna hai
-                mapValues.push(mapValue);
-            });
-            // console.log('Map values:', mapValues);
-            setFiles(...mapValues)
+        // get the firestore reference for the Folder ID coming from URL
+        const FolderRef = db.collection("myfolder").doc(location.search.substring(1));
+        // read the doc and set the files details
+        FolderRef.get().then((doc) => {
+            if (doc.exists) {
+                console.log("Document data:", doc.data());
+                setFiles(doc.data().bigFiles ? doc.data().bigFiles : []);
+            } else {
+                // doc.data() will be undefined in this case
+                console.log("No such document!");
+            }
         }).catch((error) => {
-            console.log('Error getting documents:', error);
-        });
-
-
-
-    }, [])
+            console.log("Error getting document:", error);
+        })
+    }, [location.search])
 
     function signOut() {
         // Call the Firebase authentication API to sign out the user
